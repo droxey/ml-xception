@@ -41,25 +41,19 @@ def upload_file():
     data = {"success": False}
     if request.method == 'POST':
         if request.files.get('file'):
-            # read the file
             file = request.files['file']
-
-            # read the filename
             filename = file.filename
-
-            # create a path to the uploads folder
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-
             file.save(filepath)
 
-            # Load the saved image using Keras and resize it to the Xception
-            # format of 299x299 pixels
+            # Load the saved image using Keras.
+            # Resize it to the Xception format of 299x299 pixels.
             image_size = (299, 299)
             im = keras.preprocessing.image.load_img(filepath,
                                                     target_size=image_size,
                                                     grayscale=False)
 
-            # preprocess the image and prepare it for classification
+            # Preprocess the image and prepare it for classification.
             image = prepare_image(im)
 
             global graph
@@ -68,8 +62,6 @@ def upload_file():
                 results = decode_predictions(preds)
                 data["predictions"] = []
 
-                # loop over the results and add them to the list of
-                # returned predictions
                 for (imagenetID, label, prob) in results[0]:
                     r = {"label": label, "probability": float(prob)}
                     data["predictions"].append(r)
@@ -88,7 +80,6 @@ def upload_file():
          <input type=submit value=Upload>
     </form>
     '''
-
 
 if __name__ == "__main__":
     app.run(debug=True)
